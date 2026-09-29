@@ -1,0 +1,24 @@
+# EYEWALL — one-click Render deploy
+# Use: https://dashboard.render.com -> New -> Blueprint -> pick this repo -> Apply
+#
+# This is the FREE plan: no cost, but the service sleeps when idle and a restart
+# wipes all chat history and uploads.
+# To keep data, use render-persistent.yaml instead: delete this file, rename that one
+# to render.yaml, and push. It costs about $9.50/month and nothing is ever wiped.
+services:
+  - type: web
+    name: eyewall
+    runtime: node
+    plan: free
+    buildCommand: ""
+    startCommand: node server.js
+    envVars:
+      - key: MAX_UPLOAD_MB
+        value: "50"   # the free disk is temporary; keep uploads small here
+    # vvv For permanent storage: set plan to starter and uncomment the 5 lines below vvv
+    #   - key: DATA_DIR
+    #     value: /var/data
+    # disk:
+    #   name: eyewall-data
+    #   mountPath: /var/data
+    #   sizeGB: 1

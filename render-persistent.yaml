@@ -1,0 +1,32 @@
+# EYEWALL — paid Render deploy WITH PERMANENT STORAGE
+#
+# To use this file: delete render.yaml, then rename this file to render.yaml,
+# push to GitHub, and in the Render dashboard click Manual Deploy (or re-run the Blueprint).
+#
+# What it costs (list price, check https://render.com/pricing for today's numbers):
+#   instance  $7.00 / month   (512 MB RAM, never sleeps)
+#   disk      $0.25 / GB / month  -> 10 GB = $2.50
+#   total     about $9.50 / month
+#
+# What you get that the free plan does not:
+#   - accounts, messages, images and videos survive restarts and redeploys
+#   - the service never sleeps, so the first visitor does not wait a minute
+#
+# Trade-off: a service with a disk attached runs as a single instance, so each
+# deploy has a few seconds of downtime. For a chat app that is fine.
+services:
+  - type: web
+    name: eyewall
+    runtime: node
+    plan: starter          # <- the $7 paid instance. "free" here would reject the disk below
+    buildCommand: ""
+    startCommand: node server.js
+    envVars:
+      - key: DATA_DIR
+        value: /var/data   # must match mountPath below, or data lands on the temporary filesystem
+      - key: MAX_UPLOAD_MB
+        value: "500"       # keep well under sizeGB so a few videos cannot fill the disk
+    disk:
+      name: eyewall-data
+      mountPath: /var/data
+      sizeGB: 10           # raise later in the dashboard if you run out; you cannot shrink it
